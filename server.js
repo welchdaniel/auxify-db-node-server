@@ -5,7 +5,7 @@ const ConnectMongo = require('./src/db/database');
 const app = express();
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 ConnectMongo();
 

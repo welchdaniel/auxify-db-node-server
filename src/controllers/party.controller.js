@@ -1,7 +1,10 @@
-module.exports = app => {
-    getAllParties = (req, res) => {
-        res.send("All Parties");
-    }
+const PartyService = require('../services/party.service');
 
-    app.get('/api/parties', getAllParties);
+module.exports = app => {
+	getAllParties = (req, res) => {
+		PartyService.getAllParties()
+			.then(parties => res.send(parties));
+	}
+
+	app.get('/api/parties', getAllParties);
 }
