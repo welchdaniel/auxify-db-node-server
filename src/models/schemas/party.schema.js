@@ -21,6 +21,6 @@ const PartySchema = mongoose.Schema({
 		}]
 	},
 },
-	{ collection: 'Party' });
+{ collection: 'Party' });
 
 module.exports = PartySchema;
