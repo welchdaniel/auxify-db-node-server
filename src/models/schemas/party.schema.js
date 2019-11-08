@@ -1,25 +1,18 @@
 const mongoose = require('mongoose');
 
+const User = require('./user.schema');
+const Song = require('./song.schema');
+
 const PartySchema = mongoose.Schema({
 	name: { type: String, required: true },
-	// TODO: Add users as members
-	members: [Number],
+	members: [User],
+	partyType: { type: String, enum: ['Autoplay', 'Requests'], required: true },
 	passwordReq: { type: Boolean, required: true },
 	password: String,
-	// TODO: Add user as leader of party
-	partyLeader: Number,
-	// TODO: Add users as banned members
-	bannedMembers: [Number],
-	// TODO: Revisit queue structure
-	queue: {
-		type: [{
-			trackName: String,
-			artistName: String,
-			spotifyId: String,
-			upvotes: Number,
-			downvotes: Number
-		}]
-	},
+	partyLeader: User,
+	bannedMembers: [User],
+	queueId: String,
+	history: [Song],
 },
 { collection: 'Party' });
 
