@@ -1,4 +1,5 @@
 const PartyModel = require('../models/party.model');
+const UserModel = require('../models/user.model');
 
 findAllParties = () => {
 	return PartyModel.find();
@@ -17,7 +18,25 @@ updateParty = (id, party) => {
 }
 
 deleteParty = (id) => {
-	return PartyModel.findByIdAndDelete(id);
+	return PartyModel.deleteOne({_id: id});
+}
+
+addUserToParty = async(partyId, userId) => {
+	await UserModel.updateOne({_id: userId}, {$set: {currentPartyId: partyId}});
+	const user = await UserModel.findById(userId);
+	return PartyModel.updateOne(
+		{_id: partyId},
+		{$addToSet: {members: user}},
+		{new:true, upsert:true}
+	);
+}
+
+removeUserFromParty = (partyId, userId) => {
+
+}
+
+setPartyLeader = (partyId, userId) => {
+
 }
 
 module.exports = {
@@ -26,4 +45,7 @@ module.exports = {
 	createParty,
 	updateParty,
 	deleteParty,
+	addUserToParty,
+	removeUserFromParty,
+	setPartyLeader,
 }

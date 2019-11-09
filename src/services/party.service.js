@@ -1,4 +1,5 @@
 const PartyDao = require('../dao/party.dao.js');
+const UserDao = require('../dao/user.dao');
 
 getAllParties = () => {
 	return PartyDao.findAllParties();
@@ -20,10 +21,25 @@ deleteParty = (id) => {
 	return PartyDao.deleteParty(id);
 }
 
+addUserToParty = (partyId, userId) => {
+	return PartyDao.addUserToParty(partyId, userId);
+}
+
+removeUserFromParty = (partyId, userId) => {
+
+}
+
+setPartyLeader = (partyId, userId) => {
+
+}
+
 module.exports = {
 	getAllParties,
 	getPartyById,
 	createParty,
 	updateParty,
 	deleteParty,
+	addUserToParty,
+	removeUserFromParty,
+	setPartyLeader,
 }
