@@ -28,7 +28,8 @@ const PartyController = app => {
 
 	addUserToParty = (req, res) => {
 		PartyService.addUserToParty(req.params['partyId'], req.body.userId)
-			.then(status => {res.send(status)});
+			.then(response => {res.send(response)})
+			.catch(response => {res.status(response.status).send(response.message)});
 	}
 
 	removeUserFromParty = (req, res) => {

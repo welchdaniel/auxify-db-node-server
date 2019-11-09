@@ -25,8 +25,7 @@ const addUserToParty = async(partyId, userId) => {
 	const party = await PartyModel.findById(partyId);
 	const bannedMemberIds = party.bannedMemberIds;
 	if (bannedMemberIds.includes(userId)) {
-		console.log("Cannot add user to party: user is banned");
-		throw "Specified user is banned from this party";
+		throw("Unable to add user to party: specified user is banned from this party");
 	}
 	const userUpdate = await UserModel.updateOne({_id: userId}, {$set: {currentPartyId: partyId, currentRole: 'LISTENER'}});
 	const partyUpdate = PartyModel.updateOne(
@@ -55,10 +54,9 @@ const removeUserFromParty = async(partyId, userId) => {
 
 const setPartyLeader = async(partyId, userId) => {
 	const party = await PartyModel.findById(partyId);
-	const currentPartyLeaderId = party.partyLeaderId;
+	const currentPartyLeaderId = party.partyLeaderId.toString();
 	if (currentPartyLeaderId === userId) {
-		console.log("Cannot promote user: user is already the DJ");
-		throw "Specified user is already the DJ";
+		throw("Cannot promote user: specified user is already the DJ");
 	}
 	if (currentPartyLeaderId) {
 		await UserModel.updateOne({_id: currentPartyLeaderId}, {$set: {currentRole: 'LISTENER'}});
