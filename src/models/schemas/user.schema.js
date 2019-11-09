@@ -5,14 +5,14 @@ const UserSchema = mongoose.Schema({
 	password: { type: String, required: true },
 	firstName: String,
 	lastName: String,
-	currentParty: { type: mongoose.Schema.Types.ObjectId, ref: 'Party' },
+	currentPartyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Party' },
 	currentRole: { type: String, enum: ['BROWSER', 'LISTENER', 'DJ', 'ADMIN'], required: true },
 	dob: String,
 	profilePicturePath: String,
 	spotifyUser: Boolean,
 	spotifyUsername: String,
 	spotifyUrl: String,
-	recentTracks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Song' }],
+	recentTrackIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Song' }],
 }, { collection: 'User' });
 
 module.exports = UserSchema;
