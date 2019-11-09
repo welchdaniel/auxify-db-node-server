@@ -22,21 +22,32 @@ deleteParty = (id) => {
 }
 
 addUserToParty = async(partyId, userId) => {
-	await UserModel.updateOne({_id: userId}, {$set: {currentPartyId: partyId}});
+	await UserModel.updateOne({_id: userId}, {$set: {currentPartyId: partyId, currentRole: 'LISTENER'}});
 	const user = await UserModel.findById(userId);
 	return PartyModel.updateOne(
 		{_id: partyId},
 		{$addToSet: {members: user}},
-		{new:true, upsert:true}
+		{upsert:false}
 	);
 }
 
-removeUserFromParty = (partyId, userId) => {
-
+removeUserFromParty = async(partyId, userId) => {
+	await UserModel.updateOne({_id: userId}, {$set: {currentPartyId: null, currentRole: 'BROWSER'}});
+	return PartyModel.updateOne(
+		{_id: partyId},
+		{$pull: {members: {_id: userId}}},
+		{upsert: false}
+	);
 }
 
-setPartyLeader = (partyId, userId) => {
-
+setPartyLeader = async(partyId, userId) => {
+	await UserModel.updateOne({_id: userId}, {$set: {currentPartyId: partyId, currentRole: 'DJ'}});
+	const user = await UserModel.findById(userId);
+	return PartyModel.updateOne(
+		{_id: partyId},
+		{$addToSet: {members: user}, $set: {partyLeader: user}},
+		{upsert: false}
+	);
 }
 
 module.exports = {

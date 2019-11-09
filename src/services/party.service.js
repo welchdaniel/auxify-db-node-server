@@ -26,11 +26,11 @@ addUserToParty = (partyId, userId) => {
 }
 
 removeUserFromParty = (partyId, userId) => {
-
+	return PartyDao.removeUserFromParty(partyId, userId);
 }
 
 setPartyLeader = (partyId, userId) => {
-
+	return PartyDao.setPartyLeader(partyId, userId);
 }
 
 module.exports = {
