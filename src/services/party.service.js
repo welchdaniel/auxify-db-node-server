@@ -1,5 +1,4 @@
 const PartyDao = require('../dao/party.dao.js');
-const UserDao = require('../dao/user.dao');
 
 getAllParties = () => {
 	return PartyDao.findAllParties();
@@ -33,6 +32,10 @@ setPartyLeader = (partyId, userId) => {
 	return PartyDao.setPartyLeader(partyId, userId);
 }
 
+banUserFromParty = (partyId, userId) => {
+	return PartyDao.banUserFromParty(partyId, userId);
+}
+
 module.exports = {
 	getAllParties,
 	getPartyById,
@@ -42,4 +45,5 @@ module.exports = {
 	addUserToParty,
 	removeUserFromParty,
 	setPartyLeader,
+	banUserFromParty,
 }

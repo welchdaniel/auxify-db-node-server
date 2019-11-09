@@ -1,27 +1,33 @@
 const PartyModel = require('../models/party.model');
 const UserModel = require('../models/user.model');
 
-findAllParties = () => {
+const findAllParties = () => {
 	return PartyModel.find();
 }
 
-findPartyById = (id) => {
+const findPartyById = (id) => {
 	return PartyModel.findById(id);
 }
 
-createParty = (party) => {
+const createParty = (party) => {
 	return PartyModel.create(party);
 }
 
-updateParty = (id, party) => {
+const updateParty = (id, party) => {
 	return PartyModel.updateOne({_id: id}, {$set: party});
 }
 
-deleteParty = (id) => {
+const deleteParty = (id) => {
 	return PartyModel.deleteOne({_id: id});
 }
 
-addUserToParty = async(partyId, userId) => {
+const addUserToParty = async(partyId, userId) => {
+	const party = await PartyModel.findById(partyId);
+	const bannedMemberIds = party.bannedMemberIds;
+	if (bannedMemberIds.includes(userId)) {
+		console.log("Cannot add user to party: user is banned");
+		throw "Specified user is banned from this party";
+	}
 	const userUpdate = await UserModel.updateOne({_id: userId}, {$set: {currentPartyId: partyId, currentRole: 'LISTENER'}});
 	const partyUpdate = PartyModel.updateOne(
 		{_id: partyId},
@@ -34,7 +40,7 @@ addUserToParty = async(partyId, userId) => {
 	});
 }
 
-removeUserFromParty = async(partyId, userId) => {
+const removeUserFromParty = async(partyId, userId) => {
 	const userUpdate = UserModel.updateOne({_id: userId}, {$set: {currentPartyId: null, currentRole: 'BROWSER'}});
 	const partyUpdate = PartyModel.updateOne(
 		{_id: partyId},
@@ -47,10 +53,11 @@ removeUserFromParty = async(partyId, userId) => {
 	});
 }
 
-setPartyLeader = async(partyId, userId) => {
+const setPartyLeader = async(partyId, userId) => {
 	const party = await PartyModel.findById(partyId);
 	const currentPartyLeaderId = party.partyLeaderId;
 	if (currentPartyLeaderId === userId) {
+		console.log("Cannot promote user: user is already the DJ");
 		throw "Specified user is already the DJ";
 	}
 	if (currentPartyLeaderId) {
@@ -68,6 +75,15 @@ setPartyLeader = async(partyId, userId) => {
 	});
 }
 
+const banUserFromParty = async(partyId, userId) => {
+	await removeUserFromParty(partyId, userId);
+	return PartyModel.updateOne(
+		{_id: partyId},
+		{$addToSet: {bannedMemberIds: userId}},
+		{upsert: false}
+	);
+}
+
 module.exports = {
 	findAllParties,
 	findPartyById,
@@ -77,4 +93,5 @@ module.exports = {
 	addUserToParty,
 	removeUserFromParty,
 	setPartyLeader,
+	banUserFromParty,
 }
