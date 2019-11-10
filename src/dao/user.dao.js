@@ -1,5 +1,7 @@
 const UserModel = require('../models/user.model');
 
+const PartyDao = require('./party.dao');
+
 findAllUsers = () => {
 	return UserModel.find();
 }
@@ -16,7 +18,12 @@ updateUser = (id, user) => {
 	return UserModel.updateOne({_id: id}, {$set: user});
 }
 
-deleteUser = (id) => {
+deleteUser = async(id) => {
+	const user = await UserModel.findById(id);
+	const currentPartyId = user.currentPartyId;
+	if (currentPartyId) {
+		PartyDao.removeUserFromParty(currentPartyId, id);
+	}
 	return UserModel.findByIdAndDelete(id);
 }
 

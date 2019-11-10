@@ -32,7 +32,10 @@ const addUserToParty = async(partyId, userId) => {
 	if (bannedMemberIds.includes(userId)) {
 		throw("Unable to add user to party: specified user is banned from this party");
 	}
-	const userUpdate = await UserModel.updateOne({_id: userId}, {$set: {currentPartyId: partyId, currentRole: 'LISTENER'}});
+	const userUpdate = await UserModel.updateOne(
+		{_id: userId}, 
+		{$set: {currentPartyId: partyId, currentRole: 'LISTENER'}}
+	);
 	const partyUpdate = PartyModel.updateOne(
 		{_id: partyId},
 		{$addToSet: {memberIds: userId}},
@@ -58,7 +61,10 @@ const removeUserFromParty = async(partyId, userId) => {
 		)
 	};
 	// update user to be BROWSER associated with no parties and remove user from party member list
-	const userUpdate = UserModel.updateOne({_id: userId}, {$set: {currentPartyId: null, currentRole: 'BROWSER'}});
+	const userUpdate = UserModel.updateOne(
+		{_id: userId}, 
+		{$set: {currentPartyId: null, currentRole: 'BROWSER'}}
+	);
 	const partyUpdate = PartyModel.updateOne(
 		{_id: partyId},
 		{$pull: {memberIds: userId}},
@@ -82,7 +88,10 @@ const setPartyLeader = async(partyId, userId) => {
 	if (currentPartyLeaderId) {
 		await UserModel.updateOne({_id: currentPartyLeaderId}, {$set: {currentRole: 'LISTENER'}});
 	}
-	const userUpdate = UserModel.updateOne({_id: userId}, {$set: {currentPartyId: partyId, currentRole: 'DJ'}});
+	const userUpdate = UserModel.updateOne(
+		{_id: userId}, 
+		{$set: {currentPartyId: partyId, currentRole: 'DJ'}}
+	);
 	const partyUpdate = PartyModel.updateOne(
 		{_id: partyId},
 		{$addToSet: {memberIds: userId}, $set: {partyLeaderId: userId}},
@@ -113,7 +122,10 @@ const allUsersToBrowsers = async(userIds) => {
 
 	const usersToBrowsers = async () => {
 		await asyncForEach(userIds, async (userId) => {
-			await UserModel.updateOne({_id: userId}, {$set: {currentPartyId: null, currentRole: 'BROWSER'}});
+			await UserModel.updateOne(
+				{_id: userId}, 
+				{$set: {currentPartyId: null, currentRole: 'BROWSER'}}
+			);
 		});
 	}
 
