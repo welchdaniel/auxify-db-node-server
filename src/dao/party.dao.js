@@ -17,7 +17,12 @@ const updateParty = (id, party) => {
 	return PartyModel.updateOne({_id: id}, {$set: party});
 }
 
-const deleteParty = (id) => {
+const deleteParty = async(id) => {
+	const party = await PartyModel.findById(id);
+	const partyMemberIds = party.memberIds;
+	if (partyMemberIds.length > 0) {
+		await allUsersToBrowsers(partyMemberIds);
+	}
 	return PartyModel.deleteOne({_id: id});
 }
 
@@ -40,6 +45,19 @@ const addUserToParty = async(partyId, userId) => {
 }
 
 const removeUserFromParty = async(partyId, userId) => {
+	let userIsPartyLeader = false;
+	const party = await PartyModel.findById(partyId);
+	const partyLeaderId = party.partyLeaderId;
+	// if the user being removed is the current partyLeader set partyLeader to null
+	if (partyLeaderId && partyLeaderId.toString() === userId) {
+		userIsPartyLeader = true;
+		await PartyModel.updateOne(
+			{_id: partyId},
+			{$set: {partyLeaderId: null}},
+			{upsert: false}
+		)
+	};
+	// update user to be BROWSER associated with no parties and remove user from party member list
 	const userUpdate = UserModel.updateOne({_id: userId}, {$set: {currentPartyId: null, currentRole: 'BROWSER'}});
 	const partyUpdate = PartyModel.updateOne(
 		{_id: partyId},
@@ -47,15 +65,29 @@ const removeUserFromParty = async(partyId, userId) => {
 		{upsert: false}
 	);
 	Promise.all([userUpdate, partyUpdate])
-		.then((response) => {
+		.then(async(response) => {
+			// if the user being removed is the current partyLeader, assign a new one, else return
+			if (userIsPartyLeader) {
+				const newParty = await PartyModel.findById(partyId);
+				const partyMemberIds = newParty.memberIds;
+				/**
+				 * if there are still members in the party after removing the party leader then
+				 * promote the first member in the list to partyLeader else there are no remaining
+				 * members in the party so delete the party
+				*/
+				if (partyMemberIds.length !== 0) {
+					return await setPartyLeader(partyId, partyMemberIds[0]);
+				}
+				return await PartyModel.deleteOne({_id: partyId});
+			}
 			return response;
 	});
 }
 
 const setPartyLeader = async(partyId, userId) => {
 	const party = await PartyModel.findById(partyId);
-	const currentPartyLeaderId = party.partyLeaderId.toString();
-	if (currentPartyLeaderId === userId) {
+	const currentPartyLeaderId = party.partyLeaderId;
+	if (currentPartyLeaderId && currentPartyLeaderId.toString() === userId) {
 		throw("Cannot promote user: specified user is already the DJ");
 	}
 	if (currentPartyLeaderId) {
@@ -80,6 +112,23 @@ const banUserFromParty = async(partyId, userId) => {
 		{$addToSet: {bannedMemberIds: userId}},
 		{upsert: false}
 	);
+}
+
+// helper function for deleteParty, setting all party members to BROWSERs
+const allUsersToBrowsers = async(userIds) => {
+	async function asyncForEach(array, callback) {
+		for (let index = 0; index < array.length; index++) {
+			await callback(array[index], index, array);
+		}
+	};
+
+	const usersToBrowsers = async () => {
+		await asyncForEach(userIds, async (userId) => {
+			await UserModel.updateOne({_id: userId}, {$set: {currentPartyId: null, currentRole: 'BROWSER'}});
+		});
+	}
+
+	usersToBrowsers();
 }
 
 module.exports = {

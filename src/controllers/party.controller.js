@@ -34,12 +34,14 @@ const PartyController = app => {
 
 	removeUserFromParty = (req, res) => {
 		PartyService.removeUserFromParty(req.params['partyId'], req.body.userId)
-			.then(status => {res.send(status)});
+			.then(status => {res.send(status)})
+			.catch(response => {res.status(response.status).send(response.message)});
 	}
 	
 	setPartyLeader = (req, res) => {
 		PartyService.setPartyLeader(req.params['partyId'], req.body.userId)
-			.then(status => {res.send(status)});
+			.then(status => {res.send(status)})
+			.catch(response => {res.status(response.status).send(response.message)});
 	}
 
 	banUserFromParty = (req, res) => {

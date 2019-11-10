@@ -29,8 +29,13 @@ addUserToParty = async(partyId, userId) => {
 	}
 }
 
-removeUserFromParty = (partyId, userId) => {
-	return PartyDao.removeUserFromParty(partyId, userId);
+removeUserFromParty = async(partyId, userId) => {
+	try {
+		await PartyDao.removeUserFromParty(partyId, userId);
+		return {status: '200', message: 'User removed from party'};
+	} catch(error) {
+		return {status: '406', message: error};
+	}
 }
 
 setPartyLeader = async(partyId, userId) => {
