@@ -65,20 +65,9 @@ const removeUserFromParty = async(partyId, userId) => {
 		{upsert: false}
 	);
 	Promise.all([userUpdate, partyUpdate])
-		.then(async(response) => {
-			// if the user being removed is the current partyLeader, assign a new one, else return
+		.then((response) => {
 			if (userIsPartyLeader) {
-				const newParty = await PartyModel.findById(partyId);
-				const partyMemberIds = newParty.memberIds;
-				/**
-				 * if there are still members in the party after removing the party leader then
-				 * promote the first member in the list to partyLeader else there are no remaining
-				 * members in the party so delete the party
-				*/
-				if (partyMemberIds.length !== 0) {
-					return await setPartyLeader(partyId, partyMemberIds[0]);
-				}
-				return await PartyModel.deleteOne({_id: partyId});
+				return assignNewPartyLeader(partyId);
 			}
 			return response;
 	});
@@ -129,6 +118,21 @@ const allUsersToBrowsers = async(userIds) => {
 	}
 
 	usersToBrowsers();
+}
+
+// helper function for removeUserFromParty, handling when partyLeader is removed
+const assignNewPartyLeader = async(partyId) => {
+	const newParty = await PartyModel.findById(partyId);
+	const partyMemberIds = newParty.memberIds;
+	/**
+	 * if there are still members in the party after removing the party leader then
+	 * promote the first member in the list to partyLeader else there are no remaining
+	 * members in the party so delete the party
+	*/
+	if (partyMemberIds.length !== 0) {
+		return await setPartyLeader(partyId, partyMemberIds[0]);
+	}
+	return await PartyModel.deleteOne({_id: partyId});
 }
 
 module.exports = {
