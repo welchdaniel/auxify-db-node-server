@@ -49,6 +49,11 @@ const PartyController = app => {
 			.then(status => {res.send(status)});
 	}
 
+	addSongToPlayed = (req, res) => {
+		PartyService.addSongToPlayed(req.params['partyId'], req.params['songId'])
+			.then(status => {res.send(status)});
+	}
+
 	app.get('/api/parties', getAllParties);
 	app.get('/api/parties/:partyId', getPartyById);
 	app.post('/api/parties', createParty);
@@ -59,6 +64,7 @@ const PartyController = app => {
 	app.put('/api/parties/:partyId/removeUser', removeUserFromParty);
 	app.put('/api/parties/:partyId/setDJ', setPartyLeader);
 	app.put('/api/parties/:partyId/banUser', banUserFromParty);
+	app.put('/api/parties/:partyId/song/:songId', addSongToPlayed);
 }
 
 module.exports = PartyController;

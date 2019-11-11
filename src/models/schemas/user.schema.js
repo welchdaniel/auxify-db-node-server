@@ -12,7 +12,10 @@ const UserSchema = mongoose.Schema({
 	spotifyUser: Boolean,
 	spotifyUsername: String,
 	spotifyUrl: String,
-	recentTrackIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Song' }],
+	recentTracks: [{
+		listOrder: Number,
+		songId: { type: mongoose.Schema.Types.ObjectId, ref: 'Song' },
+	}],
 }, { collection: 'User' });
 
 module.exports = UserSchema;

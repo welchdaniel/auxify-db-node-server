@@ -123,6 +123,10 @@ const banUserFromParty = async(partyId, userId) => {
 	);
 }
 
+const addSongToPlayed = async(partyId, songId) => {
+	// TODO: implement addSongToPlayed
+}
+
 // helper function for deleteParty, setting all party members to BROWSERs
 const allUsersToBrowsers = async(userIds) => {
 	async function asyncForEach(array, callback) {

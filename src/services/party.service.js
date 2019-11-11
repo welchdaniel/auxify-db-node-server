@@ -51,6 +51,10 @@ banUserFromParty = (partyId, userId) => {
 	return PartyDao.banUserFromParty(partyId, userId);
 }
 
+addSongToPlayed = (partyId, userId) => {
+	return PartyDao.addSongToPlayed(partyId, userId);
+}
+
 module.exports = {
 	getAllParties,
 	getPartyById,
