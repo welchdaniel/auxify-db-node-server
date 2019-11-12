@@ -26,11 +26,18 @@ const UserController = app => {
 			.then(status => res.send(status));
 	}
 
+	addSongToRecent = (req, res) => {
+		UserService.addSongToRecent(req.params['userId'], req.body.songId)
+			.then(status => res.send(status));
+	}
+
 	app.get('/api/users', getAllUsers);
 	app.get('/api/users/:userId', getUserById);
 	app.post('/api/users', createUser);
 	app.put('/api/users/:userId', updateUser);
 	app.delete('/api/users/:userId', deleteUser);
+
+	app.put('/api/users/:userId/addSongToRecent', addSongToRecent)
 }
 
 module.exports = UserController;

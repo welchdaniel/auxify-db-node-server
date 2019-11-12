@@ -27,10 +27,45 @@ deleteUser = async(id) => {
 	return UserModel.findByIdAndDelete(id);
 }
 
+addSongToRecent = async(userId, addedSongId) => {
+	let repeatedTrack = false;
+	let maxListOrder = 0;
+	const user = await UserModel.findById(userId);
+	const userRecentTracks = user.recentTracks;
+	for (const track of userRecentTracks) {
+		if (track.songId.toString() === addedSongId) {
+			repeatedTrack = true;
+		}
+		if (track.listOrder > maxListOrder) {
+			maxListOrder = track.listOrder;
+		}
+	}
+	const storableSong = {
+		listOrder: maxListOrder + 1,
+		songId: addedSongId,
+	}
+	if(repeatedTrack) {
+		await UserModel.updateOne(
+			{_id: userId},
+			{$pull: {recentTracks: {songId: addedSongId}}},
+			{upsert: false}
+		);
+	}
+	else {
+
+	}
+	return UserModel.updateOne(
+		{_id: userId},
+		{$addToSet: {recentTracks: storableSong}},
+		{upsert: false}
+	);
+}
+
 module.exports = {
 	findAllUsers,
 	findUserById,
 	createUser,
 	updateUser,
 	deleteUser,
+	addSongToRecent,
 }

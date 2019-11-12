@@ -20,10 +20,15 @@ deleteUser = (id) => {
 	return UserDao.deleteUser(id);
 }
 
+addSongToRecent = (userId, songId) => {
+	return UserDao.addSongToRecent(userId, songId);
+}
+
 module.exports = {
 	getAllUsers,
 	getUserById,
 	createUser,
 	updateUser,
 	deleteUser,
+	addSongToRecent,
 }
