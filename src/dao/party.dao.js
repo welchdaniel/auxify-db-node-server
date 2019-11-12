@@ -123,8 +123,24 @@ const banUserFromParty = async(partyId, userId) => {
 	);
 }
 
-const addSongToPlayed = async(partyId, songId) => {
-	// TODO: implement addSongToPlayed
+const addSongToPlayed = async(partyId, song) => {
+	const party = await PartyModel.findById(partyId);
+	const partySongsCount = party.playedSongsCount;
+	const songListOrder = partySongsCount + 1;
+	const storableSong = {
+		listOrder: songListOrder,
+		songId: song.songId,
+		numLikes: song.numLikes,
+		numDislikes: song.numDislikes,
+	}
+	return PartyModel.updateOne(
+		{_id: partyId},
+		{
+			$set: {playedSongsCount: songListOrder},
+			$addToSet: {playedSongs: storableSong}
+		},
+		{upsert: false}
+	);
 }
 
 // helper function for deleteParty, setting all party members to BROWSERs
@@ -172,4 +188,5 @@ module.exports = {
 	removeUserFromParty,
 	setPartyLeader,
 	banUserFromParty,
+	addSongToPlayed,
 }

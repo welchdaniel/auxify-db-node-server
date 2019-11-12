@@ -51,8 +51,8 @@ banUserFromParty = (partyId, userId) => {
 	return PartyDao.banUserFromParty(partyId, userId);
 }
 
-addSongToPlayed = (partyId, userId) => {
-	return PartyDao.addSongToPlayed(partyId, userId);
+addSongToPlayed = (partyId, song) => {
+	return PartyDao.addSongToPlayed(partyId, song);
 }
 
 module.exports = {
@@ -65,4 +65,5 @@ module.exports = {
 	removeUserFromParty,
 	setPartyLeader,
 	banUserFromParty,
+	addSongToPlayed,
 }

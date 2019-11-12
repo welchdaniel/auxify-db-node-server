@@ -9,12 +9,15 @@ const PartySchema = mongoose.Schema({
 	partyLeaderId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 	bannedMemberIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 	queueId: String,
-	playedSongs: [{
-		listOrder: Number,
-		songId: { type: mongoose.Schema.Types.ObjectId, ref: 'Song' },
-		numLikes: Number,
-		numDislikes: Number,
-	}],
+	playedSongsCount: Number,
+	playedSongs: [
+		{
+			listOrder: Number,
+			songId: { type: mongoose.Schema.Types.ObjectId, ref: 'Song' },
+			numLikes: Number,
+			numDislikes: Number,
+		}
+	],
 },
 { collection: 'Party' });
 
