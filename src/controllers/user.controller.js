@@ -31,6 +31,12 @@ const UserController = app => {
 			.then(status => res.send(status));
 	}
 
+	login = (req, res) => {
+		// TODO: password encryption
+		UserService.login(req.body.username, req.body.password)
+			.then(response => res.send(response));
+	}
+
 	app.get('/api/users', getAllUsers);
 	app.get('/api/users/:userId', getUserById);
 	app.post('/api/users', createUser);
@@ -38,6 +44,8 @@ const UserController = app => {
 	app.delete('/api/users/:userId', deleteUser);
 
 	app.put('/api/users/:userId/addSongToRecent', addSongToRecent)
+
+	app.post('/api/login', login);
 }
 
 module.exports = UserController;

@@ -61,6 +61,17 @@ addSongToRecent = async(userId, addedSongId) => {
 	);
 }
 
+login = async(un, pw) => {
+	const user = await UserModel.findOne({username: un});
+	if (!user) {
+		throw("Invalid username");
+	}
+	if (pw === user.password) {
+		return user;
+	}
+	throw("Incorrect password"); 
+}
+
 module.exports = {
 	findAllUsers,
 	findUserById,
@@ -68,4 +79,5 @@ module.exports = {
 	updateUser,
 	deleteUser,
 	addSongToRecent,
+	login,
 }
