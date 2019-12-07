@@ -13,7 +13,7 @@ const UserController = app => {
 
 	createUser = (req, res) => {
 		UserService.createUser(req.body)
-			.then(users => res.send(users));
+			.then(user => res.send(user));
 	}
 
 	updateUser = (req, res) => {
