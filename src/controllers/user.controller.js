@@ -6,6 +6,11 @@ const UserController = app => {
 			.then(users => res.send(users));
 	}
 
+	getUserByUsername = (req, res) => {
+		UserService.getUserByUsername(req.body.username)
+			.then(user => res.send(user));
+	}
+
 	getUserById = (req, res) => {
 		UserService.getUserById(req.params['userId'])
 			.then(user => {res.send(user)});
@@ -38,6 +43,7 @@ const UserController = app => {
 	}
 
 	app.get('/api/users', getAllUsers);
+	app.post('/api/users/getByUsername', getUserByUsername);
 	app.get('/api/users/:userId', getUserById);
 	app.post('/api/users', createUser);
 	app.put('/api/users/:userId', updateUser);

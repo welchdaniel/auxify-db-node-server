@@ -10,6 +10,10 @@ findUserById = (id) => {
 	return UserModel.findById(id);
 }
 
+findUserByUsername = (un) => {
+	return UserModel.findOne({username: un});
+}
+
 createUser = (user) => {
 	return UserModel.create(user);
 }
@@ -62,7 +66,7 @@ addSongToRecent = async(userId, addedSongId) => {
 }
 
 login = async(un, pw) => {
-	const user = await UserModel.findOne({username: un});
+	const user = await UserModel.findOne({username: un}).select('+password').exec();
 	if (!user) {
 		throw("Invalid username");
 	}
@@ -75,6 +79,7 @@ login = async(un, pw) => {
 module.exports = {
 	findAllUsers,
 	findUserById,
+	findUserByUsername,
 	createUser,
 	updateUser,
 	deleteUser,

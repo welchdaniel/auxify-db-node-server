@@ -8,6 +8,10 @@ getUserById = (id) => {
 	return UserDao.findUserById(id);
 }
 
+getUserByUsername = (username) => {
+	return UserDao.findUserByUsername(username);
+}
+
 createUser = (user) => {
 	return UserDao.createUser(user);
 }
@@ -37,6 +41,7 @@ login = async(username, password) => {
 module.exports = {
 	getAllUsers,
 	getUserById,
+	getUserByUsername,
 	createUser,
 	updateUser,
 	deleteUser,
