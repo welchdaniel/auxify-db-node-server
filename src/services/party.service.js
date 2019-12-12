@@ -1,4 +1,6 @@
+const DEFAULTS = require('../util/defaults.js')
 const PartyDao = require('../dao/party.dao.js');
+const UserDao = require('../dao/user.dao.js');
 
 getAllParties = () => {
 	return PartyDao.findAllParties();
@@ -6,6 +8,25 @@ getAllParties = () => {
 
 getPartyById = (id) => {
 	return PartyDao.findPartyById(id);
+}
+
+userCreateParty = async(userId, party) => {
+	const storableParty = {
+		...DEFAULTS.defaultParty,
+		name: party.name,
+		partyType: party.partyType,
+		passwordReq: party.passwordReq,
+		password: party.password,
+	}
+	const user = await UserDao.findUserById(userId);
+	const userPartyId = user['currentPartyId'];
+	if (!!userPartyId) {
+		await PartyDao.removeUserFromParty(userPartyId, userId);
+	}
+	const newParty = await PartyDao.createParty(storableParty);
+	const newPartyId = newParty['_id'];
+	await PartyDao.setPartyLeader(newPartyId, userId);
+	return PartyDao.findPartyById(newPartyId);
 }
 
 createParty = (party) => {
@@ -58,6 +79,7 @@ addSongToPlayed = (partyId, song) => {
 module.exports = {
 	getAllParties,
 	getPartyById,
+	userCreateParty,
 	createParty,
 	updateParty,
 	deleteParty,

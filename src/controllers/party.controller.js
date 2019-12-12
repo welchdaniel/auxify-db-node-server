@@ -16,6 +16,11 @@ const PartyController = app => {
 			.then(parties => res.send(parties));
 	}
 
+	userCreateParty = (req, res) => {
+		PartyService.userCreateParty(req.body.userId, req.body.party)
+			.then(party => res.send(party));
+	}
+
 	updateParty = (req, res) => {
 		PartyService.updateParty(req.params['partyId'], req.body)
 			.then(status => res.send(status));
@@ -56,6 +61,7 @@ const PartyController = app => {
 
 	app.get('/api/parties', getAllParties);
 	app.get('/api/parties/:partyId', getPartyById);
+	app.post('/api/parties/create', userCreateParty);
 	app.post('/api/parties', createParty);
 	app.put('/api/parties/:partyId', updateParty);
 	app.delete('/api/parties/:partyId', deleteParty);
